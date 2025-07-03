@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ola Job's - Prototype</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-item {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .section {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1, h2 {
+            margin-bottom: 1.5rem;
+            color: #333;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        form {
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        input, textarea, button {
+            padding: 1rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .success-msg {
+            color: #22c55e;
+            text-align: center;
+            font-weight: bold;
+            padding: 1rem;
+            background: rgba(34, 197, 94, 0.1);
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .service-item {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #667eea;
+            transition: transform 0.3s ease;
+        }
+
+        .service-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-title {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .service-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .budget {
+            font-weight: bold;
+            color: #22c55e;
+        }
+
+        .user-status {
+            position: fixed;
+            top: 100px;
+            right: 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .welcome-text {
+            text-align: center;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .section {
+                padding: 2rem 1rem;
+            }
+            
+            .user-status {
+                position: static;
+                margin: 1rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">O</div>
+                <span>Ola Job's</span>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item" onclick="showSection('home')">Plateforme</li>
+                    <li class="nav-item" onclick="showSection('register')">Créer un compte</li>
+                    <li class="nav-item" onclick="showSection('login')">Connexion</li>
+                    <li class="nav-item" onclick="showSection('create')">Créer Demande/Offre</li>
+                    <li class="nav-item" onclick="showSection('list')">Liste des Services</li>
+                    <li class="nav-item" onclick="showSection('community')">Communauté</li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div id="user-status" class="user-status hidden">
+        <div id="user-welcome"></div>
+    </div>
+
+    <main>
+        <section id="home" class="section active">
+            <h1>Bienvenue sur Ola Job's</h1>
+            <p class="welcome-text">La plateforme des services locaux et de l'entraide communautaire au Bénin. Connectez-vous avec votre voisinage pour échanger des services, partager vos compétences et construire une communauté solidaire.</p>
+            <div style="text-align: center; margin-top: 2rem;">
+                <button onclick="showSection('register')" style="margin-right: 1rem;">Commencer maintenant</button>
+                <button onclick="showSection('list')" style="background: transparent; color: #667eea; border: 2px solid #667eea;">Voir les services</button>
+            </div>
+        </section>
+
+        <section id="register" class="section">
+            <h2>Créer un compte</h2>
+            <form id="register-form">
+                <input type="text" placeholder="Nom d'utilisateur" id="reg-username" required>
+                <input type="email" placeholder="Email" id="reg-email" required>
+                <input type="password" placeholder="Mot de passe" id="reg-password" required>
+                <input type="text" placeholder="Ville" id="reg-city" required>
+                <button type="submit">S'inscrire</button>
+                <p id="register-success" class="hidden success-msg">Inscription réussie ! Vous pouvez maintenant vous connecter.</p>
+            </form>
+        </section>
+
+        <section id="login" class="section">
+            <h2>Connexion</h2>
+            <form id="login-form">
+                <input type="text" placeholder="Nom d'utilisateur ou Email" id="login-user" required>
+                <input type="password" placeholder="Mot de passe" id="login-pass" required>
+                <button type="submit">Se connecter</button>
+                <p id="login-success" class="hidden success-msg">Connexion réussie ! Bienvenue sur Ola Job's.</p>
+            </form>
+        </section>
+
+        <section id="create" class="section">
+            <h2>Créer une demande ou une offre</h2>
+            <form id="service-form">
+                <select id="service-type" required>
+                    <option value="">Type de service</option>
+                    <option value="demande">Demande de service</option>
+                    <option value="offre">Offre de service</option>
+                </select>
+                <input type="text" id="title" placeholder="Titre du service" required>
+                <textarea id="description" placeholder="Description détaillée" required></textarea>
+                <select id="category">
+                    <option value="">Catégorie</option>
+                    <option value="menage">Ménage</option>
+                    <option value="jardinage">Jardinage</option>
+                    <option value="bricolage">Bricolage</option>
+                    <option value="informatique">Informatique</option>
+                    <option value="cours">Cours particuliers</option>
+                    <option value="transport">Transport</option>
+                    <option value="autre">Autre</option>
+                </select>
+                <input type="text" id="location" placeholder="Lieu (quartier, ville)" required>
+                <input type="number" id="budget" placeholder="Budget (FCFA)" required>
+                <button type="submit">Publier</button>
+                <p id="service-success" class="hidden success-msg">Service publié avec succès !</p>
+            </form>
+        </section>
+
+        <section id="list" class="section">
+            <h2>Services publiés</h2>
+            <div style="margin-bottom: 2rem; text-align: center;">
+                <select id="filter-category" onchange="filterServices()">
+                    <option value="">Toutes les catégories</option>
+                    <option value="menage">Ménage</option>
+                    <option value="jardinage">Jardinage</option>
+                    <option value="bricolage">Bricolage</option>
+                    <option value="informatique">Informatique</option>
+                    <option value="cours">Cours particuliers</option>
+                    <option value="transport">Transport</option>
+                    <option value="autre">Autre</option>
+                </select>
+            </div>
+            <div id="services-list"></div>
+        </section>
+
+        <section id="community" class="section">
+            <h2>Communauté d'échange</h2>
+            <p class="welcome-text">Partagez vos idées, discutez avec les autres membres et construisez ensemble une communauté solidaire.</p>
+            <div style="background: rgba(102, 126, 234, 0.1); padding: 2rem; border-radius: 12px; text-align: center;">
+                <h3>Fonctionnalité à venir</h3>
+                <p>Le forum communautaire sera bientôt disponible pour échanger avec tous les membres d'Ola Job's.</p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Variables globales
+        let currentUser = null;
+        let services = [];
+        let users = [];
+
+        // Fonctions d'affichage des sections
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        // Gestion de l'inscription
+        document.getElementById('register-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('reg-username').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            const city = document.getElementById('reg-city').value;
+            
+            // Simulation de l'enregistrement
+            const newUser = {
+                id: Date.now(),
+                username,
+                email,
+                password,
+                city
+            };
+            
+            users.push(newUser);
+            
+            document.getElementById('register-success').classList.remove('hidden');
+            document.getElementById('register-form').reset();
+            
+            setTimeout(() => {
+                showSection('login');
+            }, 1500);
+        });
+
+        // Gestion de la connexion
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const userInput = document.getElementById('login-user').value;
+            const password = document.getElementById('login-pass').value;
+            
+            // Simulation de la vérification
+            const user = users.find(u => 
+                (u.username === userInput || u.email === userInput) && u.password === password
+            );
+            
+            if (user) {
+                currentUser = user;
+                document.getElementById('login-success').classList.remove('hidden');
+                updateUserStatus();
+                document.getElementById('login-form').reset();
+                
+                setTimeout(() => {
+                    showSection('home');
+                }, 1500);
+            } else {
+                alert('Identifiants incorrects');
+            }
+        });
+
+        // Mise à jour du statut utilisateur
+        function updateUserStatus() {
+            const statusDiv = document.getElementById('user-status');
+            const welcomeDiv = document.getElementById('user-welcome');
+            
+            if (currentUser) {
+                welcomeDiv.innerHTML = `
+                    <strong>Bonjour ${currentUser.username} !</strong><br>
+                    <small>${currentUser.city}</small><br>
+                    <button onclick="logout()" style="margin-top: 0.5rem; padding: 0.5rem; font-size: 0.8rem;">Déconnexion</button>
+                `;
+                statusDiv.classList.remove('hidden');
+            } else {
+                statusDiv.classList.add('hidden');
+            }
+        }
+
+        // Déconnexion
+        function logout() {
+            currentUser = null;
+            updateUserStatus();
+            showSection('home');
+        }
+
+        // Gestion de la création de services
+        document.getElementById('service-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!currentUser) {
+                alert('Veuillez vous connecter pour publier un service');
+                showSection('login');
+                return;
+            }
+            
+            const serviceType = document.getElementById('service-type').value;
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const category = document.getElementById('category').value;
+            const location = document.getElementById('location').value;
+            const budget = document.getElementById('budget').value;
+            
+            const newService = {
+                id: Date.now(),
+                type: serviceType,
+                title,
+                description,
+                category,
+                location,
+                budget: parseInt(budget),
+                author: currentUser.username,
+                date: new Date().toLocaleDateString('fr-FR')
+            };
+            
+            services.push(newService);
+            
+            document.getElementById('service-success').classList.remove('hidden');
+            document.getElementById('service-form').reset();
+            
+            displayServices();
+            
+            setTimeout(() => {
+                showSection('list');
+            }, 1500);
+        });
+
+        // Affichage des services
+        function displayServices() {
+            const servicesList = document.getElementById('services-list');
+            const filterCategory = document.getElementById('filter-category').value;
+            
+            let filteredServices = services;
+            if (filterCategory) {
+                filteredServices = services.filter(service => service.category === filterCategory);
+            }
+            
+            if (filteredServices.length === 0) {
+                servicesList.innerHTML = '<p style="text-align: center; color: #666;">Aucun service publié pour le moment.</p>';
+                return;
+            }
+            
+            servicesList.innerHTML = filteredServices.map(service => `
+                <div class="service-item">
+                    <div class="service-title">${service.title}</div>
+                    <div style="margin: 0.5rem 0; color: #888; font-size: 0.9rem;">
+                        ${service.type === 'demande' ? '🔍 Demande' : '💼 Offre'} • ${service.category || 'Non catégorisé'}
+                    </div>
+                    <p style="margin: 1rem 0;">${service.description}</p>
+                    <div class="service-meta">
+                        <span>📍 ${service.location}</span>
+                        <span class="budget">${service.budget.toLocaleString()} FCFA</span>
+                    </div>
+                    <div class="service-meta">
+                        <span>👤 ${service.author}</span>
+                        <span>📅 ${service.date}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filtrage des services
+        function filterServices() {
+            displayServices();
+        }
+
+        // Initialisation avec quelques services d'exemple
+        function initializeExampleData() {
+            services = [
+                {
+                    id: 1,
+                    type: 'offre',
+                    title: 'Cours de français et mathématiques',
+                    description: 'Professeur expérimenté propose des cours particuliers pour élèves du primaire et secondaire.',
+                    category: 'cours',
+                    location: 'Cotonou, Fidjrossè',
+                    budget: 5000,
+                    author: 'Marie K.',
+                    date: '03/07/2025'
+                },
+                {
+                    id: 2,
+                    type: 'demande',
+                    title: 'Aide pour déménagement',
+                    description: 'Recherche personnes pour m\'aider à déménager ce weekend. Camion disponible.',
+                    category: 'transport',
+                    location: 'Porto-Novo',
+                    budget: 15000,
+                    author: 'Jean B.',
+                    date: '02/07/2025'
+                },
+                {
+                    id: 3,
+                    type: 'offre',
+                    title: 'Réparation d\'ordinateurs',
+                    description: 'Service de dépannage et réparation d\'ordinateurs portables et de bureau.',
+                    category: 'informatique',
+                    location: 'Cotonou, Akpakpa',
+                    budget: 8000,
+                    author: 'Tech Pro',
+                    date: '01/07/2025'
+                }
+            ];
+            displayServices();
+        }
+
+        // Initialisation au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeExampleData();
+        });
+    </script>
+</body>
+</html>
