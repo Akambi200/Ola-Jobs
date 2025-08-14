@@ -1,576 +1,596 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ola Job's - Prototype</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
-        }
-
-        .header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 2rem;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-
-        .nav-menu {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-        }
-
-        .nav-item {
-            cursor: pointer;
-            padding: 0.5rem 1rem;
-            border-radius: 25px;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .nav-item:hover {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        main {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 2rem;
-        }
-
-        .section {
-            display: none;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 3rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            animation: fadeIn 0.5s ease;
-        }
-
-        .section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        h1, h2 {
-            margin-bottom: 1.5rem;
-            color: #333;
-            text-align: center;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        form {
-            max-width: 500px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        input, textarea, button {
-            padding: 1rem;
-            border: 2px solid #e1e5e9;
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        input:focus, textarea:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 120px;
-        }
-
-        button {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            transition: transform 0.3s ease;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .success-msg {
-            color: #22c55e;
-            text-align: center;
-            font-weight: bold;
-            padding: 1rem;
-            background: rgba(34, 197, 94, 0.1);
-            border-radius: 8px;
-            margin-top: 1rem;
-        }
-
-        .service-item {
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            border-left: 4px solid #667eea;
-            transition: transform 0.3s ease;
-        }
-
-        .service-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .service-title {
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 0.5rem;
-        }
-
-        .service-meta {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 1rem;
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        .budget {
-            font-weight: bold;
-            color: #22c55e;
-        }
-
-        .user-status {
-            position: fixed;
-            top: 100px;
-            right: 2rem;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 1rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-        }
-
-        .welcome-text {
-            text-align: center;
-            font-size: 1.2rem;
-            line-height: 1.6;
-            margin-bottom: 2rem;
-        }
-
-        @media (max-width: 768px) {
-            .nav-menu {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-            
-            .nav-container {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            
-            .section {
-                padding: 2rem 1rem;
-            }
-            
-            .user-status {
-                position: static;
-                margin: 1rem 0;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ola Job's — Plateforme</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+      font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+      background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+      min-height:100vh;color:#333
+    }
+    .header{
+      background:rgba(255,255,255,.95);backdrop-filter:blur(10px);
+      box-shadow:0 4px 20px rgba(0,0,0,.1);position:sticky;top:0;z-index:1000
+    }
+    .nav-container{
+      max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem
+    }
+    .logo{display:flex;align-items:center;gap:.5rem;font-size:1.5rem;font-weight:700;color:#667eea}
+    .logo-icon{width:40px;height:40px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:1.2rem}
+    .nav-menu{display:flex;list-style:none;gap:1rem;flex-wrap:wrap}
+    .nav-item{cursor:pointer;padding:.5rem 1rem;border-radius:25px;transition:.25s;font-weight:500;border:2px solid transparent}
+    .nav-item:hover{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;transform:translateY(-2px)}
+    .nav-item.locked{border-color:#e5e7eb;color:#9ca3af}
+    main{max-width:1200px;margin:2rem auto;padding:0 2rem}
+    .section{display:none;background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border-radius:20px;padding:2rem;box-shadow:0 8px 32px rgba(0,0,0,.1);animation:fadeIn .5s ease}
+    .section.active{display:block}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    h1,h2{margin-bottom:1rem;color:#333;text-align:center}
+    h1{font-size:2.2rem;background:linear-gradient(135deg,#667eea,#764ba2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    form{max-width:650px;margin:0 auto;display:flex;flex-direction:column;gap:.85rem}
+    label{font-size:.95rem;font-weight:600}
+    input,select,textarea,button{
+      padding:.9rem;border:2px solid #e1e5e9;border-radius:12px;font-size:1rem;transition:.2s;background:#fff
+    }
+    input:focus,select:focus,textarea:focus{outline:none;border-color:#667eea;box-shadow:0 0 0 3px rgba(102,126,234,.1)}
+    textarea{resize:vertical;min-height:120px}
+    button{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;cursor:pointer;font-weight:700}
+    button:hover{transform:translateY(-1px);box-shadow:0 8px 25px rgba(102,126,234,.25)}
+    .muted{color:#64748b;font-size:.9rem}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:.85rem}
+    .success-msg{color:#22c55e;text-align:center;font-weight:700;padding:.8rem;background:rgba(34,197,94,.1);border-radius:8px;margin-top:.5rem}
+    .error-msg{color:#ef4444;text-align:center;font-weight:600;padding:.8rem;background:rgba(239,68,68,.08);border-radius:8px;margin-top:.5rem}
+    .hidden{display:none}
+    .service-item{background:rgba(255,255,255,.88);border-radius:12px;padding:1rem;margin-bottom:1rem;border-left:4px solid #667eea;transition:.2s}
+    .service-item:hover{transform:translateX(3px);box-shadow:0 4px 20px rgba(0,0,0,.08)}
+    .service-title{font-weight:800;color:#667eea;margin-bottom:.3rem}
+    .service-meta{display:flex;justify-content:space-between;gap:1rem;margin-top:.5rem;font-size:.92rem;color:#666;flex-wrap:wrap}
+    .badge{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:#eef2ff;color:#3730a3;font-weight:700;font-size:.8rem}
+    .budget{font-weight:800;color:#22c55e}
+    .user-status{position:fixed;top:100px;right:2rem;background:rgba(255,255,255,.95);padding:1rem;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.1);backdrop-filter:blur(10px)}
+    .salons{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem}
+    .salon{background:#fff;border:2px solid #e5e7eb;border-radius:12px;padding:1rem;cursor:pointer;transition:.2s}
+    .salon:hover{border-color:#667eea;transform:translateY(-2px)}
+    .thread{margin-top:1rem;border-top:2px solid #e5e7eb;padding-top:1rem}
+    .msg{padding:.7rem;border:1px solid #e5e7eb;border-radius:10px;margin:.5rem 0;background:#fafafa}
+    .msg small{color:#6b7280}
+    .pill{display:inline-flex;align-items:center;gap:.4rem;border:1px solid #e5e7eb;border-radius:999px;padding:.2rem .6rem;font-size:.8rem}
+    @media(max-width:768px){
+      .nav-menu{gap:.5rem}
+      .nav-container{flex-direction:column;gap:.6rem}
+      .row{grid-template-columns:1fr}
+      .user-status{position:static;margin:1rem 0}
+    }
+  </style>
 </head>
 <body>
-    <header class="header">
-        <div class="nav-container">
-            <div class="logo">
-                <div class="logo-icon">O</div>
-                <span>Ola Job's</span>
-            </div>
-            <nav>
-                <ul class="nav-menu">
-                    <li class="nav-item" onclick="showSection('home')">Plateforme</li>
-                    <li class="nav-item" onclick="showSection('register')">Créer un compte</li>
-                    <li class="nav-item" onclick="showSection('login')">Connexion</li>
-                    <li class="nav-item" onclick="showSection('create')">Créer Demande/Offre</li>
-                    <li class="nav-item" onclick="showSection('list')">Liste des Services</li>
-                    <li class="nav-item" onclick="showSection('community')">Communauté</li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-    <div id="user-status" class="user-status hidden">
-        <div id="user-welcome"></div>
+<header class="header">
+  <div class="nav-container">
+    <div class="logo">
+      <div class="logo-icon">O</div><span>Ola Job's</span>
     </div>
+    <nav>
+      <ul class="nav-menu">
+        <li class="nav-item" onclick="showSection('home')">Plateforme</li>
+        <li class="nav-item" onclick="showSection('register')">Créer un compte</li>
+        <li class="nav-item" onclick="showSection('login')">Connexion</li>
+        <!-- Accès restreint aux trois items suivants si non connecté -->
+        <li id="nav-create" class="nav-item locked" onclick="guardedNav('create')">Créer une offre</li>
+        <li id="nav-list" class="nav-item locked" onclick="guardedNav('list')">Liste des Services</li>
+        <li id="nav-community" class="nav-item locked" onclick="guardedNav('community')">Communauté</li>
+      </ul>
+    </nav>
+  </div>
+</header>
 
-    <main>
-        <section id="home" class="section active">
-            <h1>Bienvenue sur Ola Job's</h1>
-            <p class="welcome-text">La plateforme des services locaux et de l'entraide communautaire au Bénin. Connectez-vous avec votre voisinage pour échanger des services, partager vos compétences et construire une communauté solidaire.</p>
-            <div style="text-align: center; margin-top: 2rem;">
-                <button onclick="showSection('register')" style="margin-right: 1rem;">Commencer maintenant</button>
-                <button onclick="showSection('list')" style="background: transparent; color: #667eea; border: 2px solid #667eea;">Voir les services</button>
-            </div>
-        </section>
+<div id="user-status" class="user-status hidden">
+  <div id="user-welcome"></div>
+</div>
 
-        <section id="register" class="section">
-            <h2>Créer un compte</h2>
-            <form id="register-form">
-                <input type="text" placeholder="Nom d'utilisateur" id="reg-username" required>
-                <input type="email" placeholder="Email" id="reg-email" required>
-                <input type="password" placeholder="Mot de passe" id="reg-password" required>
-                <input type="text" placeholder="Ville" id="reg-city" required>
-                <button type="submit">S'inscrire</button>
-                <p id="register-success" class="hidden success-msg">Inscription réussie ! Vous pouvez maintenant vous connecter.</p>
-            </form>
-        </section>
+<main>
+  <!-- Accueil -->
+  <section id="home" class="section active" aria-labelledby="home-title">
+    <h1 id="home-title">Bienvenue sur Ola Job's</h1>
+    <p class="muted" style="text-align:center;max-width:800px;margin:.5rem auto 0">
+      Échange de services locaux, compétences et entraide communautaire au Bénin.
+    </p>
+    <div style="text-align:center;margin-top:1.2rem">
+      <button onclick="showSection('register')" style="margin-right:.5rem">Commencer maintenant</button>
+      <button onclick="guardedNav('list')" style="background:transparent;color:#667eea;border:2px solid #667eea">
+        Voir les services
+      </button>
+    </div>
+  </section>
 
-        <section id="login" class="section">
-            <h2>Connexion</h2>
-            <form id="login-form">
-                <input type="text" placeholder="Nom d'utilisateur ou Email" id="login-user" required>
-                <input type="password" placeholder="Mot de passe" id="login-pass" required>
-                <button type="submit">Se connecter</button>
-                <p id="login-success" class="hidden success-msg">Connexion réussie ! Bienvenue sur Ola Job's.</p>
-            </form>
-        </section>
+  <!-- Inscription -->
+  <section id="register" class="section" aria-labelledby="register-title">
+    <h2 id="register-title">Créer un compte</h2>
+    <form id="register-form">
+      <label for="reg-username">Nom d'utilisateur</label>
+      <input id="reg-username" required/>
 
-        <section id="create" class="section">
-            <h2>Créer une demande ou une offre</h2>
-            <form id="service-form">
-                <select id="service-type" required>
-                    <option value="">Type de service</option>
-                    <option value="demande">Demande de service</option>
-                    <option value="offre">Offre de service</option>
-                </select>
-                <input type="text" id="title" placeholder="Titre du service" required>
-                <textarea id="description" placeholder="Description détaillée" required></textarea>
-                <select id="category">
-                    <option value="">Catégorie</option>
-                    <option value="menage">Ménage</option>
-                    <option value="jardinage">Jardinage</option>
-                    <option value="bricolage">Bricolage</option>
-                    <option value="informatique">Informatique</option>
-                    <option value="cours">Cours particuliers</option>
-                    <option value="transport">Transport</option>
-                    <option value="autre">Autre</option>
-                </select>
-                <input type="text" id="location" placeholder="Lieu (quartier, ville)" required>
-                <input type="number" id="budget" placeholder="Budget (FCFA)" required>
-                <button type="submit">Publier</button>
-                <p id="service-success" class="hidden success-msg">Service publié avec succès !</p>
-            </form>
-        </section>
+      <label for="reg-email">Email</label>
+      <input id="reg-email" type="email" required/>
 
-        <section id="list" class="section">
-            <h2>Services publiés</h2>
-            <div style="margin-bottom: 2rem; text-align: center;">
-                <select id="filter-category" onchange="filterServices()">
-                    <option value="">Toutes les catégories</option>
-                    <option value="menage">Ménage</option>
-                    <option value="jardinage">Jardinage</option>
-                    <option value="bricolage">Bricolage</option>
-                    <option value="informatique">Informatique</option>
-                    <option value="cours">Cours particuliers</option>
-                    <option value="transport">Transport</option>
-                    <option value="autre">Autre</option>
-                </select>
-            </div>
-            <div id="services-list"></div>
-        </section>
+      <label for="reg-password">Mot de passe</label>
+      <input id="reg-password" type="password" minlength="4" required/>
 
-        <section id="community" class="section">
-            <h2>Communauté d'échange</h2>
-            <p class="welcome-text">Partagez vos idées, discutez avec les autres membres et construisez ensemble une communauté solidaire.</p>
-            <div style="background: rgba(102, 126, 234, 0.1); padding: 2rem; border-radius: 12px; text-align: center;">
-                <h3>Fonctionnalité à venir</h3>
-                <p>Le forum communautaire sera bientôt disponible pour échanger avec tous les membres d'Ola Job's.</p>
-            </div>
-        </section>
-    </main>
+      <label for="reg-city">Ville</label>
+      <input id="reg-city" required/>
 
-    <script>
-        // Variables globales
-        let currentUser = null;
-        let services = [];
-        let users = [];
+      <button type="submit">S'inscrire</button>
+      <p id="register-success" class="success-msg hidden">Inscription réussie ! Vous pouvez vous connecter.</p>
+    </form>
+  </section>
 
-        // Fonctions d'affichage des sections
-        function showSection(sectionId) {
-            document.querySelectorAll('.section').forEach(section => {
-                section.classList.remove('active');
-            });
-            document.getElementById(sectionId).classList.add('active');
-        }
+  <!-- Connexion -->
+  <section id="login" class="section" aria-labelledby="login-title">
+    <h2 id="login-title">Connexion</h2>
+    <form id="login-form">
+      <label for="login-user">Nom d'utilisateur ou Email</label>
+      <input id="login-user" required/>
 
-        // Gestion de l'inscription
-        document.getElementById('register-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const username = document.getElementById('reg-username').value;
-            const email = document.getElementById('reg-email').value;
-            const password = document.getElementById('reg-password').value;
-            const city = document.getElementById('reg-city').value;
-            
-            // Simulation de l'enregistrement
-            const newUser = {
-                id: Date.now(),
-                username,
-                email,
-                password,
-                city
-            };
-            
-            users.push(newUser);
-            
-            document.getElementById('register-success').classList.remove('hidden');
-            document.getElementById('register-form').reset();
-            
-            setTimeout(() => {
-                showSection('login');
-            }, 1500);
-        });
+      <label for="login-pass">Mot de passe</label>
+      <input id="login-pass" type="password" required/>
 
-        // Gestion de la connexion
-        document.getElementById('login-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const userInput = document.getElementById('login-user').value;
-            const password = document.getElementById('login-pass').value;
-            
-            // Simulation de la vérification
-            const user = users.find(u => 
-                (u.username === userInput || u.email === userInput) && u.password === password
-            );
-            
-            if (user) {
-                currentUser = user;
-                document.getElementById('login-success').classList.remove('hidden');
-                updateUserStatus();
-                document.getElementById('login-form').reset();
-                
-                setTimeout(() => {
-                    showSection('home');
-                }, 1500);
-            } else {
-                alert('Identifiants incorrects');
-            }
-        });
+      <button type="submit">Se connecter</button>
+      <p id="login-success" class="success-msg hidden">Connexion réussie ! Bienvenue.</p>
+      <p id="login-error" class="error-msg hidden">Identifiants incorrects.</p>
+    </form>
+  </section>
 
-        // Mise à jour du statut utilisateur
-        function updateUserStatus() {
-            const statusDiv = document.getElementById('user-status');
-            const welcomeDiv = document.getElementById('user-welcome');
-            
-            if (currentUser) {
-                welcomeDiv.innerHTML = `
-                    <strong>Bonjour ${currentUser.username} !</strong><br>
-                    <small>${currentUser.city}</small><br>
-                    <button onclick="logout()" style="margin-top: 0.5rem; padding: 0.5rem; font-size: 0.8rem;">Déconnexion</button>
-                `;
-                statusDiv.classList.remove('hidden');
-            } else {
-                statusDiv.classList.add('hidden');
-            }
-        }
+  <!-- Créer une OFFRE (unique) -->
+  <section id="create" class="section" aria-labelledby="create-title">
+    <h2 id="create-title">Créer une offre de service</h2>
+    <form id="service-form">
+      <!-- Type forcé à Offre -->
+      <div class="pill" aria-label="Type d'annonce"><span>💼</span><strong>Offre de service</strong></div>
 
-        // Déconnexion
-        function logout() {
-            currentUser = null;
-            updateUserStatus();
-            showSection('home');
-        }
+      <label for="title">Titre de l'offre</label>
+      <input id="title" placeholder="Ex. Réparation de climatiseur" required/>
 
-        // Gestion de la création de services
-        document.getElementById('service-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            if (!currentUser) {
-                alert('Veuillez vous connecter pour publier un service');
-                showSection('login');
-                return;
-            }
-            
-            const serviceType = document.getElementById('service-type').value;
-            const title = document.getElementById('title').value;
-            const description = document.getElementById('description').value;
-            const category = document.getElementById('category').value;
-            const location = document.getElementById('location').value;
-            const budget = document.getElementById('budget').value;
-            
-            const newService = {
-                id: Date.now(),
-                type: serviceType,
-                title,
-                description,
-                category,
-                location,
-                budget: parseInt(budget),
-                author: currentUser.username,
-                date: new Date().toLocaleDateString('fr-FR')
-            };
-            
-            services.push(newService);
-            
-            document.getElementById('service-success').classList.remove('hidden');
-            document.getElementById('service-form').reset();
-            
-            displayServices();
-            
-            setTimeout(() => {
-                showSection('list');
-            }, 1500);
-        });
+      <label for="description">Description détaillée</label>
+      <textarea id="description" placeholder="Décrivez précisément la prestation..." required></textarea>
 
-        // Affichage des services
-        function displayServices() {
-            const servicesList = document.getElementById('services-list');
-            const filterCategory = document.getElementById('filter-category').value;
-            
-            let filteredServices = services;
-            if (filterCategory) {
-                filteredServices = services.filter(service => service.category === filterCategory);
-            }
-            
-            if (filteredServices.length === 0) {
-                servicesList.innerHTML = '<p style="text-align: center; color: #666;">Aucun service publié pour le moment.</p>';
-                return;
-            }
-            
-            servicesList.innerHTML = filteredServices.map(service => `
-                <div class="service-item">
-                    <div class="service-title">${service.title}</div>
-                    <div style="margin: 0.5rem 0; color: #888; font-size: 0.9rem;">
-                        ${service.type === 'demande' ? '🔍 Demande' : '💼 Offre'} • ${service.category || 'Non catégorisé'}
-                    </div>
-                    <p style="margin: 1rem 0;">${service.description}</p>
-                    <div class="service-meta">
-                        <span>📍 ${service.location}</span>
-                        <span class="budget">${service.budget.toLocaleString()} FCFA</span>
-                    </div>
-                    <div class="service-meta">
-                        <span>👤 ${service.author}</span>
-                        <span>📅 ${service.date}</span>
-                    </div>
-                </div>
-            `).join('');
-        }
+      <div class="row">
+        <div>
+          <label for="category">Catégorie</label>
+          <select id="category" required onchange="toggleOtherCategory()">
+            <option value="">Choisir...</option>
+            <option value="menage">Ménage</option>
+            <option value="jardinage">Jardinage</option>
+            <option value="bricolage">Bricolage</option>
+            <option value="informatique">Informatique</option>
+            <option value="cours">Cours particuliers</option>
+            <option value="transport">Transport</option>
+            <option value="cuisine">Cuisine</option>
+            <option value="autre">Autre (préciser)</option>
+          </select>
+        </div>
+        <div id="other-cat-wrap" class="hidden">
+          <label for="other-category">Préciser la catégorie</label>
+          <input id="other-category" placeholder="Ex. Couture, Coiffure, etc."/>
+        </div>
+      </div>
 
-        // Filtrage des services
-        function filterServices() {
-            displayServices();
-        }
+      <div class="row">
+        <div>
+          <label for="location">Lieu (quartier, ville)</label>
+          <input id="location" placeholder="Ex. Cotonou, Akpakpa" required/>
+        </div>
+        <div>
+          <label for="phone">Téléphone</label>
+          <input id="phone" inputmode="tel" pattern="[0-9+\s]{6,}" placeholder="+229 90 00 00 00" required/>
+        </div>
+      </div>
 
-        // Initialisation avec quelques services d'exemple
-        function initializeExampleData() {
-            services = [
-                {
-                    id: 1,
-                    type: 'offre',
-                    title: 'Cours de français et mathématiques',
-                    description: 'Professeur expérimenté propose des cours particuliers pour élèves du primaire et secondaire.',
-                    category: 'cours',
-                    location: 'Cotonou, Fidjrossè',
-                    budget: 5000,
-                    author: 'Marie K.',
-                    date: '03/07/2025'
-                },
-                {
-                    id: 2,
-                    type: 'demande',
-                    title: 'Aide pour déménagement',
-                    description: 'Recherche personnes pour m\'aider à déménager ce weekend. Camion disponible.',
-                    category: 'transport',
-                    location: 'Porto-Novo',
-                    budget: 15000,
-                    author: 'Jean B.',
-                    date: '02/07/2025'
-                },
-                {
-                    id: 3,
-                    type: 'offre',
-                    title: 'Réparation d\'ordinateurs',
-                    description: 'Service de dépannage et réparation d\'ordinateurs portables et de bureau.',
-                    category: 'informatique',
-                    location: 'Cotonou, Akpakpa',
-                    budget: 8000,
-                    author: 'Tech Pro',
-                    date: '01/07/2025'
-                }
-            ];
-            displayServices();
-        }
+      <div class="row">
+        <div>
+          <label for="date">Date d'exécution</label>
+          <input id="date" type="date" required/>
+        </div>
+        <div>
+          <label for="time">Heure d'exécution</label>
+          <input id="time" type="time" required/>
+        </div>
+      </div>
 
-        // Initialisation au chargement de la page
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeExampleData();
-        });
-    </script>
+      <div class="row">
+        <div>
+          <label for="budget-select">Budget (FCFA)</label>
+          <select id="budget-select" required onchange="toggleCustomBudget()">
+            <option value="">Choisir un tarif...</option>
+            <option value="1000">1 000</option>
+            <option value="2000">2 000</option>
+            <option value="3000">3 000</option>
+            <option value="5000">5 000</option>
+            <option value="10000">10 000</option>
+            <option value="15000">15 000</option>
+            <option value="20000">20 000</option>
+            <option value="custom">Autre montant…</option>
+          </select>
+        </div>
+        <div id="custom-budget-wrap" class="hidden">
+          <label for="budget">Autre montant (≥ 1 000)</label>
+          <input id="budget" type="number" min="1000" step="500" placeholder="Ex. 25 000"/>
+        </div>
+      </div>
+
+      <button type="submit">Publier l'offre</button>
+      <p id="service-success" class="success-msg hidden">Offre publiée avec succès !</p>
+    </form>
+  </section>
+
+  <!-- Liste des services -->
+  <section id="list" class="section" aria-labelledby="list-title">
+    <h2 id="list-title">Services publiés</h2>
+    <div style="text-align:center;margin-bottom:1rem">
+      <select id="filter-category" onchange="displayServices()">
+        <option value="">Toutes les catégories</option>
+        <option value="menage">Ménage</option>
+        <option value="jardinage">Jardinage</option>
+        <option value="bricolage">Bricolage</option>
+        <option value="informatique">Informatique</option>
+        <option value="cours">Cours particuliers</option>
+        <option value="transport">Transport</option>
+        <option value="cuisine">Cuisine</option>
+        <option value="autre">Autre</option>
+      </select>
+    </div>
+    <div id="services-list"></div>
+    <p id="no-services" class="muted" style="text-align:center"></p>
+  </section>
+
+  <!-- Communauté -->
+  <section id="community" class="section" aria-labelledby="community-title">
+    <h2 id="community-title">Communauté d'échange</h2>
+    <p class="muted" style="text-align:center;margin-bottom:1rem">
+      Choisis un salon et commence la discussion avec les autres membres.
+    </p>
+
+    <div class="salons" id="salon-grid"></div>
+
+    <div id="salon-panel" class="hidden">
+      <div class="thread">
+        <h3 id="salon-title" style="text-align:left;margin-bottom:.5rem"></h3>
+        <div id="messages"></div>
+        <form id="msg-form" style="margin-top:.8rem">
+          <label for="msg-input">Votre message</label>
+          <textarea id="msg-input" required placeholder="Écris ton message…"></textarea>
+          <button type="submit" style="margin-top:.5rem">Envoyer</button>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+/** =========================
+ *  Données & persistance
+ *  ========================= */
+let currentUser = null;
+let users = [];
+let services = [];
+let messages = {}; // { salonKey: [{author, text, ts}] }
+
+const SALONS = [
+  { key:'entrepreneuriat', name:'Entrepreneuriat' },
+  { key:'education', name:'Éducation sexuelle & formation' },
+  { key:'agro', name:'Agro-industrie' },
+  { key:'sante', name:'Santé & Bien-être (Échanges Sportifs)' },
+  { key:'numerique', name:'Numérique & Technologie' },
+  { key:'environnement', name:'Environnement' },
+  { key:'commerce', name:'Commerce & E‑commerce' },
+  { key:'culture', name:'Culture' },
+];
+
+function loadState(){
+  users = JSON.parse(localStorage.getItem('ola_users')||'[]');
+  services = JSON.parse(localStorage.getItem('ola_services')||'[]');
+  messages = JSON.parse(localStorage.getItem('ola_messages')||'{}');
+  const savedUser = JSON.parse(localStorage.getItem('ola_current_user')||'null');
+  if(savedUser){ currentUser = savedUser; updateUserStatus(); setProtectedNav(true);}
+}
+function saveUsers(){ localStorage.setItem('ola_users', JSON.stringify(users)); }
+function saveServices(){ localStorage.setItem('ola_services', JSON.stringify(services)); }
+function saveMessages(){ localStorage.setItem('ola_messages', JSON.stringify(messages)); }
+function saveCurrentUser(){ 
+  if(currentUser) localStorage.setItem('ola_current_user', JSON.stringify(currentUser));
+  else localStorage.removeItem('ola_current_user');
+}
+
+/** =========================
+ *  Navigation & garde
+ *  ========================= */
+function showSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function setProtectedNav(connected){
+  ['nav-create','nav-list','nav-community'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(connected){ el.classList.remove('locked'); }
+    else{ el.classList.add('locked'); }
+  });
+}
+function guardedNav(sectionId){
+  if(!currentUser){
+    alert('Veuillez vous connecter pour accéder à cette section.');
+    showSection('login');
+    return;
+  }
+  showSection(sectionId);
+}
+
+/** =========================
+ *  Inscription / connexion
+ *  ========================= */
+document.getElementById('register-form').addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const username = document.getElementById('reg-username').value.trim();
+  const email = document.getElementById('reg-email').value.trim().toLowerCase();
+  const password = document.getElementById('reg-password').value;
+  const city = document.getElementById('reg-city').value.trim();
+
+  if(users.some(u=>u.username===username || u.email===email)){
+    alert('Un compte existe déjà avec ce nom d’utilisateur ou cet email.');
+    return;
+  }
+  const newUser = { id:Date.now(), username, email, password, city };
+  users.push(newUser); saveUsers();
+
+  document.getElementById('register-success').classList.remove('hidden');
+  (e.target).reset();
+  setTimeout(()=>showSection('login'), 1000);
+});
+
+document.getElementById('login-form').addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const idf = document.getElementById('login-user').value.trim().toLowerCase();
+  const pass = document.getElementById('login-pass').value;
+  const user = users.find(u => (u.username.toLowerCase()===idf || u.email===idf) && u.password===pass);
+  document.getElementById('login-error').classList.add('hidden');
+
+  if(user){
+    currentUser = user; saveCurrentUser();
+    document.getElementById('login-success').classList.remove('hidden');
+    updateUserStatus(); setProtectedNav(true); (e.target).reset();
+    setTimeout(()=>showSection('home'), 900);
+  } else {
+    document.getElementById('login-error').classList.remove('hidden');
+  }
+});
+
+function updateUserStatus(){
+  const statusDiv = document.getElementById('user-status');
+  const welcomeDiv = document.getElementById('user-welcome');
+
+  if(currentUser){
+    welcomeDiv.innerHTML = `
+      <strong>Bonjour ${currentUser.username} !</strong><br>
+      <small>${currentUser.city}</small><br>
+      <button onclick="logout()" style="margin-top:.5rem;padding:.5rem;font-size:.85rem">Déconnexion</button>
+    `;
+    statusDiv.classList.remove('hidden');
+  } else {
+    statusDiv.classList.add('hidden');
+  }
+}
+function logout(){
+  currentUser = null; saveCurrentUser(); setProtectedNav(false);
+  updateUserStatus(); showSection('home');
+}
+
+/** =========================
+ *  Création d’offre
+ *  ========================= */
+function toggleOtherCategory(){
+  const v = document.getElementById('category').value;
+  document.getElementById('other-cat-wrap').classList.toggle('hidden', v!=='autre');
+}
+function toggleCustomBudget(){
+  const v = document.getElementById('budget-select').value;
+  document.getElementById('custom-budget-wrap').classList.toggle('hidden', v!=='custom');
+}
+
+document.getElementById('service-form').addEventListener('submit', (e)=>{
+  e.preventDefault();
+  if(!currentUser){ return guardedNav('login'); }
+
+  const title = document.getElementById('title').value.trim();
+  const description = document.getElementById('description').value.trim();
+  let category = document.getElementById('category').value;
+  const other = document.getElementById('other-category').value.trim();
+  if(category==='autre'){
+    if(!other){ alert('Veuillez préciser la catégorie.'); return; }
+    category = other;
+  }
+
+  const location = document.getElementById('location').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const date = document.getElementById('date').value; // yyyy-mm-dd
+  const time = document.getElementById('time').value; // HH:MM
+  if(!date || !time){ alert('Veuillez indiquer la date et l’heure d’exécution.'); return; }
+
+  const budgetSel = document.getElementById('budget-select').value;
+  let budget = 0;
+  if(budgetSel==='custom'){
+    const v = Number(document.getElementById('budget').value);
+    if(!v || v<1000){ alert('Budget minimal 1 000 FCFA.'); return; }
+    budget = Math.round(v);
+  } else {
+    budget = Number(budgetSel||0);
+    if(budget<1000){ alert('Budget minimal 1 000 FCFA.'); return; }
+  }
+
+  const deadlineISO = new Date(`${date}T${time}:00`).toISOString();
+
+  const newService = {
+    id: Date.now(),
+    type: 'offre',
+    title, description, category, location, phone,
+    budget, author: currentUser.username,
+    datePublished: new Date().toISOString(),
+    deadlineISO
+  };
+
+  services.push(newService); saveServices();
+  document.getElementById('service-success').classList.remove('hidden');
+  (e.target).reset(); document.getElementById('other-cat-wrap').classList.add('hidden');
+  document.getElementById('custom-budget-wrap').classList.add('hidden');
+
+  displayServices();
+  setTimeout(()=>showSection('list'), 900);
+});
+
+/** =========================
+ *  Liste + expiration auto
+ *  ========================= */
+function isExpired(svc){
+  return new Date(svc.deadlineISO).getTime() < Date.now();
+}
+function displayServices(){
+  const servicesList = document.getElementById('services-list');
+  const filterCategory = document.getElementById('filter-category').value;
+  const valid = services.filter(s => !isExpired(s));
+  const filtered = filterCategory ? valid.filter(s => (s.category||'').toLowerCase() === filterCategory.toLowerCase()) : valid;
+
+  // Purge silencieuse des expirés pour qu’ils ne réapparaissent pas
+  const keep = services.filter(s => !isExpired(s));
+  if(keep.length !== services.length){ services = keep; saveServices(); }
+
+  if(filtered.length===0){
+    servicesList.innerHTML = '';
+    document.getElementById('no-services').textContent = 'Aucune offre active pour le moment.';
+    return;
+  }
+  document.getElementById('no-services').textContent = '';
+
+  servicesList.innerHTML = filtered.map(service => {
+    const when = new Date(service.deadlineISO);
+    const dt = when.toLocaleDateString('fr-FR');
+    const tm = when.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+    const cat = service.category || 'Non catégorisé';
+    return `
+      <div class="service-item" aria-label="Offre de service">
+        <div class="service-title">${escapeHtml(service.title)}</div>
+        <div class="service-meta">
+          <span class="badge">Offre</span>
+          <span>${escapeHtml(cat)}</span>
+        </div>
+        <p style="margin:.6rem 0;">${escapeHtml(service.description)}</p>
+        <div class="service-meta">
+          <span>📍 ${escapeHtml(service.location)}</span>
+          <span class="budget">${(service.budget||0).toLocaleString('fr-FR')} FCFA</span>
+        </div>
+        <div class="service-meta">
+          <span>📞 ${escapeHtml(service.phone)}</span>
+          <span>⏰ ${dt} à ${tm}</span>
+        </div>
+        <div class="service-meta">
+          <span>👤 ${escapeHtml(service.author)}</span>
+          <span>📅 Publié le ${new Date(service.datePublished).toLocaleDateString('fr-FR')}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+/** =========================
+ *  Communauté (salons)
+ *  ========================= */
+const salonGrid = document.getElementById('salon-grid');
+const salonPanel = document.getElementById('salon-panel');
+const salonTitle = document.getElementById('salon-title');
+const messagesDiv = document.getElementById('messages');
+const msgForm = document.getElementById('msg-form');
+let currentSalon = null;
+
+function renderSalons(){
+  salonGrid.innerHTML = SALONS.map(s=>`
+    <div class="salon" onclick="openSalon('${s.key}')">
+      <strong>${s.name}</strong>
+      <p class="muted" style="margin-top:.3rem">Rejoins la discussion →</p>
+    </div>
+  `).join('');
+}
+function openSalon(key){
+  if(!currentUser){ return guardedNav('community'); }
+  currentSalon = key;
+  const meta = SALONS.find(s=>s.key===key);
+  salonTitle.textContent = meta ? meta.name : 'Salon';
+  salonPanel.classList.remove('hidden');
+  renderMessages();
+  document.getElementById('msg-input').focus();
+}
+function renderMessages(){
+  const list = messages[currentSalon] || [];
+  if(list.length===0){ messagesDiv.innerHTML = `<p class="muted">Aucun message pour l’instant. Soyez le premier à écrire !</p>`; return; }
+  messagesDiv.innerHTML = list.map(m=>`
+    <div class="msg">
+      <strong>${escapeHtml(m.author)}</strong> <small>· ${new Date(m.ts).toLocaleString('fr-FR')}</small>
+      <div style="margin-top:.3rem">${escapeHtml(m.text)}</div>
+    </div>
+  `).join('');
+}
+msgForm.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  if(!currentUser){ return guardedNav('community'); }
+  const text = document.getElementById('msg-input').value.trim();
+  if(!text) return;
+  messages[currentSalon] = messages[currentSalon] || [];
+  messages[currentSalon].push({ author: currentUser.username, text, ts: Date.now() });
+  saveMessages();
+  (e.target).reset();
+  renderMessages();
+});
+
+/** =========================
+ *  Utilitaires
+ *  ========================= */
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' }[m])); }
+
+/** =========================
+ *  Init
+ *  ========================= */
+document.addEventListener('DOMContentLoaded', ()=>{
+  loadState();
+  renderSalons();
+  displayServices();
+
+  // Bouchon d’exemples si base vide
+  if(services.length===0){
+    const now = new Date();
+    const future1 = new Date(now.getTime()+24*3600*1000);
+    const future2 = new Date(now.getTime()+48*3600*1000);
+    services = [
+      {
+        id:1,type:'offre',
+        title:'Cours de français & mathématiques',
+        description:'Prof expérimenté pour primaire & collège.',
+        category:'cours',location:'Cotonou, Fidjrossè',phone:'+229 90 00 00 00',
+        budget:5000,author:'Marie K.',
+        datePublished:new Date().toISOString(),
+        deadlineISO: new Date(future1).toISOString()
+      },
+      {
+        id:2,type:'offre',
+        title:'Aide pour déménagement',
+        description:'Besoin de 2 personnes ce week‑end. Camion dispo.',
+        category:'transport',location:'Porto‑Novo',phone:'+229 91 11 11 11',
+        budget:15000,author:'Jean B.',
+        datePublished:new Date().toISOString(),
+        deadlineISO: new Date(future2).toISOString()
+      }
+    ];
+    saveServices();
+  }
+  displayServices();
+});
+</script>
 </body>
 </html>
