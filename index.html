@@ -137,8 +137,41 @@
       <input id="login-pass" type="password" required/>
 
       <button type="submit">Se connecter</button>
+      
+      <!-- AJOUT : Lien mot de passe oublié -->
+      <p style="text-align:center;margin-top:.8rem">
+        <a href="#" onclick="showSection('forgot-password'); return false;" style="color:#667eea;text-decoration:underline;font-size:.9rem">
+          Mot de passe oublié ?
+        </a>
+      </p>
+      
       <p id="login-success" class="success-msg hidden">Connexion réussie ! Bienvenue.</p>
       <p id="login-error" class="error-msg hidden">Identifiants incorrects.</p>
+    </form>
+  </section>
+
+  <!-- Mot de passe oublié -->
+  <section id="forgot-password" class="section" aria-labelledby="forgot-title">
+    <h2 id="forgot-title">Réinitialiser le mot de passe</h2>
+    
+    <p class="muted" style="text-align:center;max-width:500px;margin:0 auto 1.5rem">
+      Entrez votre nom d'utilisateur ou email. Nous afficherons votre mot de passe si le compte existe.
+    </p>
+    
+    <form id="forgot-form">
+      <label for="forgot-identifier">Nom d'utilisateur ou Email</label>
+      <input id="forgot-identifier" required placeholder="Votre username ou email"/>
+
+      <button type="submit">Récupérer le mot de passe</button>
+      
+      <p id="forgot-success" class="success-msg hidden"></p>
+      <p id="forgot-error" class="error-msg hidden">Aucun compte trouvé avec ces informations.</p>
+      
+      <p style="text-align:center;margin-top:1rem">
+        <a href="#" onclick="showSection('login'); return false;" style="color:#667eea;text-decoration:underline;font-size:.9rem">
+          ← Retour à la connexion
+        </a>
+      </p>
     </form>
   </section>
 
@@ -203,19 +236,19 @@
           <label for="budget-select">Budget (FCFA)</label>
           <select id="budget-select" required onchange="toggleCustomBudget()">
             <option value="">Choisir un tarif...</option>
-            <option value="1000">1 000</option>
-            <option value="2000">2 000</option>
-            <option value="3000">3 000</option>
-            <option value="5000">5 000</option>
-            <option value="10000">10 000</option>
-            <option value="15000">15 000</option>
-            <option value="20000">20 000</option>
+            <option value="1000">1 000</option>
+            <option value="2000">2 000</option>
+            <option value="3000">3 000</option>
+            <option value="5000">5 000</option>
+            <option value="10000">10 000</option>
+            <option value="15000">15 000</option>
+            <option value="20000">20 000</option>
             <option value="custom">Autre montant…</option>
           </select>
         </div>
         <div id="custom-budget-wrap" class="hidden">
-          <label for="budget">Autre montant (≥ 1 000)</label>
-          <input id="budget" type="number" min="1000" step="500" placeholder="Ex. 25 000"/>
+          <label for="budget">Autre montant (≥ 1 000)</label>
+          <input id="budget" type="number" min="1000" step="500" placeholder="Ex. 25 000"/>
         </div>
       </div>
 
@@ -227,6 +260,12 @@
   <!-- Liste des services -->
   <section id="list" class="section" aria-labelledby="list-title">
     <h2 id="list-title">Services publiés</h2>
+    
+    <!-- Info sécurité numéros masqués -->
+    <div style="background:#eff6ff;border:1px solid #3b82f6;border-radius:8px;padding:.8rem;margin-bottom:1rem;font-size:.9rem">
+      ℹ️ <strong>Pour votre sécurité :</strong> Les numéros sont masqués. Utilisez le bouton "Contacter" pour joindre le prestataire via WhatsApp.
+    </div>
+    
     <div style="text-align:center;margin-bottom:1rem">
       <select id="filter-category" onchange="displayServices()">
         <option value="">Toutes les catégories</option>
@@ -268,6 +307,12 @@
 </main>
 
 <script>
+/** =========================
+ *  Configuration Admin
+ *  ========================= */
+const ADMIN_USERNAME = 'admin'; // REMPLACER par votre nom d'utilisateur admin
+const INTERMEDIARY_PHONE = '01 47 73 68 67'; // Votre numéro intermédiaire
+
 /** =========================
  *  Données & persistance
  *  ========================= */
@@ -337,7 +382,7 @@ document.getElementById('register-form').addEventListener('submit', (e)=>{
   const city = document.getElementById('reg-city').value.trim();
 
   if(users.some(u=>u.username===username || u.email===email)){
-    alert('Un compte existe déjà avec ce nom d’utilisateur ou cet email.');
+    alert('Un compte existe déjà avec ce nom d\'utilisateur ou cet email.');
     return;
   }
   const newUser = { id:Date.now(), username, email, password, city };
@@ -386,7 +431,70 @@ function logout(){
 }
 
 /** =========================
- *  Création d’offre
+ *  Mot de passe oublié
+ *  ========================= */
+document.getElementById('forgot-form').addEventListener('submit', (e)=>{
+  e.preventDefault();
+  
+  const identifier = document.getElementById('forgot-identifier').value.trim().toLowerCase();
+  
+  // Chercher l'utilisateur
+  const user = users.find(u => 
+    u.username.toLowerCase() === identifier || 
+    u.email.toLowerCase() === identifier
+  );
+  
+  // Cacher les messages précédents
+  document.getElementById('forgot-success').classList.add('hidden');
+  document.getElementById('forgot-error').classList.add('hidden');
+  
+  if(user) {
+    // Afficher le mot de passe
+    const successMsg = document.getElementById('forgot-success');
+    successMsg.innerHTML = `
+      <strong>Compte trouvé !</strong><br>
+      <span style="font-size:.95rem">Nom d'utilisateur : <strong>${user.username}</strong></span><br>
+      <span style="font-size:.95rem">Email : <strong>${user.email}</strong></span><br>
+      <span style="font-size:.95rem">Mot de passe : 
+        <strong style="font-size:1.1rem;color:#667eea" id="password-display">••••••</strong>
+        <button onclick="togglePasswordDisplay('${user.password}')" 
+                style="padding:.3rem .6rem;font-size:.8rem;margin-left:.5rem;background:#667eea;color:#fff;border:none;border-radius:6px;cursor:pointer">
+          👁️ Afficher
+        </button>
+      </span><br>
+      <br>
+      <small style="color:#64748b">Notez-le bien et connectez-vous maintenant.</small>
+    `;
+    successMsg.classList.remove('hidden');
+    
+    // Rediriger vers connexion après 8 secondes
+    setTimeout(() => {
+      showSection('login');
+      document.getElementById('login-user').value = user.username;
+      document.getElementById('login-user').focus();
+    }, 8000);
+    
+  } else {
+    // Compte introuvable
+    document.getElementById('forgot-error').classList.remove('hidden');
+  }
+});
+
+function togglePasswordDisplay(password) {
+  const display = document.getElementById('password-display');
+  const btn = event.target;
+  
+  if(display.textContent === '••••••') {
+    display.textContent = password;
+    btn.textContent = '🙈 Masquer';
+  } else {
+    display.textContent = '••••••';
+    btn.textContent = '👁️ Afficher';
+  }
+}
+
+/** =========================
+ *  Création d'offre
  *  ========================= */
 function toggleOtherCategory(){
   const v = document.getElementById('category').value;
@@ -414,17 +522,17 @@ document.getElementById('service-form').addEventListener('submit', (e)=>{
   const phone = document.getElementById('phone').value.trim();
   const date = document.getElementById('date').value; // yyyy-mm-dd
   const time = document.getElementById('time').value; // HH:MM
-  if(!date || !time){ alert('Veuillez indiquer la date et l’heure d’exécution.'); return; }
+  if(!date || !time){ alert('Veuillez indiquer la date et l\'heure d\'exécution.'); return; }
 
   const budgetSel = document.getElementById('budget-select').value;
   let budget = 0;
   if(budgetSel==='custom'){
     const v = Number(document.getElementById('budget').value);
-    if(!v || v<1000){ alert('Budget minimal 1 000 FCFA.'); return; }
+    if(!v || v<1000){ alert('Budget minimal 1 000 FCFA.'); return; }
     budget = Math.round(v);
   } else {
     budget = Number(budgetSel||0);
-    if(budget<1000){ alert('Budget minimal 1 000 FCFA.'); return; }
+    if(budget<1000){ alert('Budget minimal 1 000 FCFA.'); return; }
   }
 
   const deadlineISO = new Date(`${date}T${time}:00`).toISOString();
@@ -448,20 +556,42 @@ document.getElementById('service-form').addEventListener('submit', (e)=>{
 });
 
 /** =========================
- *  Liste + expiration auto
+ *  Liste + expiration auto + Masquage numéros
  *  ========================= */
 function isExpired(svc){
   return new Date(svc.deadlineISO).getTime() < Date.now();
 }
+
+function getDisplayPhone(service) {
+  // Si pas connecté → numéro intermédiaire
+  if (!currentUser) {
+    return INTERMEDIARY_PHONE;
+  }
+  
+  // Si c'est l'admin OU l'auteur de l'offre → voir le vrai numéro
+  if (currentUser.username === ADMIN_USERNAME || currentUser.username === service.author) {
+    return service.phone;
+  }
+  
+  // Sinon → numéro intermédiaire
+  return INTERMEDIARY_PHONE;
+}
+
+function contactProvider(phone, serviceTitle, author) {
+  const message = encodeURIComponent(`Bonjour ! Je suis intéressé(e) par votre offre "${serviceTitle}" sur Ola Job's. Êtes-vous disponible ?`);
+  const whatsappUrl = `https://wa.me/${phone.replace(/[\s-]/g, '')}?text=${message}`;
+  window.open(whatsappUrl, '_blank');
+}
+
 function displayServices(){
   const servicesList = document.getElementById('services-list');
   const filterCategory = document.getElementById('filter-category').value;
   const valid = services.filter(s => !isExpired(s));
   const filtered = filterCategory ? valid.filter(s => (s.category||'').toLowerCase() === filterCategory.toLowerCase()) : valid;
 
-  // Purge silencieuse des expirés pour qu’ils ne réapparaissent pas
+  // Purge silencieuse des expirés pour qu'ils ne réapparaissent pas
   const keep = services.filter(s => !isExpired(s));
-  if(keep.length !== services.length){ services = keep; saveServices(); }
+if(keep.length !== services.length){ services = keep; saveServices(); }
 
   if(filtered.length===0){
     servicesList.innerHTML = '';
@@ -475,9 +605,24 @@ function displayServices(){
     const dt = when.toLocaleDateString('fr-FR');
     const tm = when.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
     const cat = service.category || 'Non catégorisé';
+    const displayPhone = getDisplayPhone(service);
+    
+   // Badge admin pour distinguer visuellement
+    const isAdmin = currentUser && currentUser.username === 'Allah';
+    const isAuthor = currentUser && currentUser.username === service.author;
+    
+    // Construire les badges (admin peut avoir les deux badges)
+    let badge = '';
+    if (isAdmin) {
+      badge += '<span class="badge" style="background:#ef4444;color:#fff;margin-left:.5rem">👑 ADMIN</span>';
+    }
+    if (isAuthor) {
+      badge += '<span class="badge" style="background:#22c55e;color:#fff;margin-left:.5rem">✨ VOS OFFRES</span>';
+    } ;
+    
     return `
       <div class="service-item" aria-label="Offre de service">
-        <div class="service-title">${escapeHtml(service.title)}</div>
+        <div class="service-title">${escapeHtml(service.title)} ${badge}</div>
         <div class="service-meta">
           <span class="badge">Offre</span>
           <span>${escapeHtml(cat)}</span>
@@ -488,12 +633,18 @@ function displayServices(){
           <span class="budget">${(service.budget||0).toLocaleString('fr-FR')} FCFA</span>
         </div>
         <div class="service-meta">
-          <span>📞 ${escapeHtml(service.phone)}</span>
+          <span>📞 ${escapeHtml(displayPhone)}</span>
           <span>⏰ ${dt} à ${tm}</span>
         </div>
         <div class="service-meta">
           <span>👤 ${escapeHtml(service.author)}</span>
           <span>📅 Publié le ${new Date(service.datePublished).toLocaleDateString('fr-FR')}</span>
+        </div>
+        <div class="service-meta" style="margin-top:.8rem;padding-top:.8rem;border-top:1px solid #e5e7eb">
+          <button onclick="contactProvider('${displayPhone}', '${escapeHtml(service.title).replace(/'/g, "\\'")}', '${service.author}')" 
+                  style="width:100%;padding:.7rem;background:#22c55e;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:700">
+            📞 Contacter le prestataire
+          </button>
         </div>
       </div>
     `;
@@ -529,7 +680,7 @@ function openSalon(key){
 }
 function renderMessages(){
   const list = messages[currentSalon] || [];
-  if(list.length===0){ messagesDiv.innerHTML = `<p class="muted">Aucun message pour l’instant. Soyez le premier à écrire !</p>`; return; }
+  if(list.length===0){ messagesDiv.innerHTML = `<p class="muted">Aucun message pour l'instant. Soyez le premier à écrire !</p>`; return; }
   messagesDiv.innerHTML = list.map(m=>`
     <div class="msg">
       <strong>${escapeHtml(m.author)}</strong> <small>· ${new Date(m.ts).toLocaleString('fr-FR')}</small>
@@ -562,29 +713,60 @@ document.addEventListener('DOMContentLoaded', ()=>{
   renderSalons();
   displayServices();
 
-  // Bouchon d’exemples si base vide
+  // Bouchon d'exemples si base vide
   if(services.length===0){
     const now = new Date();
     const future1 = new Date(now.getTime()+24*3600*1000);
     const future2 = new Date(now.getTime()+48*3600*1000);
+    const future3 = new Date(now.getTime()+72*3600*1000);
+    const future4 = new Date(now.getTime()+96*3600*1000);
+    const future5 = new Date(now.getTime()+120*3600*1000);
+    
     services = [
       {
         id:1,type:'offre',
         title:'Cours de français & mathématiques',
-        description:'Prof expérimenté pour primaire & collège.',
+        description:'Prof expérimenté pour primaire & collège. Méthode pédagogique adaptée à chaque élève.',
         category:'cours',location:'Cotonou, Fidjrossè',phone:'+229 90 00 00 00',
         budget:5000,author:'Marie K.',
         datePublished:new Date().toISOString(),
-        deadlineISO: new Date(future1).toISOString()
+        deadlineISO: future1.toISOString()
       },
       {
         id:2,type:'offre',
         title:'Aide pour déménagement',
-        description:'Besoin de 2 personnes ce week‑end. Camion dispo.',
+        description:'Besoin de 2 personnes ce week‑end. Camion disponible. Service rapide et soigné.',
         category:'transport',location:'Porto‑Novo',phone:'+229 91 11 11 11',
         budget:15000,author:'Jean B.',
         datePublished:new Date().toISOString(),
-        deadlineISO: new Date(future2).toISOString()
+        deadlineISO: future2.toISOString()
+      },
+      {
+        id:3,type:'offre',
+        title:'Réparation de climatiseurs',
+        description:'Technicien qualifié. Diagnostic gratuit. Intervention rapide sous 24h. Garantie 3 mois.',
+        category:'bricolage',location:'Cotonou, Akpakpa',phone:'+229 92 22 22 22',
+        budget:10000,author:'Koffi A.',
+        datePublished:new Date().toISOString(),
+        deadlineISO: future3.toISOString()
+      },
+      {
+        id:4,type:'offre',
+        title:'Coiffeuse à domicile',
+        description:'Tresses, tissages, soins capillaires. Je me déplace avec mon matériel professionnel.',
+        category:'autre',location:'Cotonou, Cadjèhoun',phone:'+229 93 33 33 33',
+        budget:8000,author:'Fatou D.',
+        datePublished:new Date().toISOString(),
+        deadlineISO: future4.toISOString()
+      },
+      {
+        id:5,type:'offre',
+        title:'Développeur web freelance',
+        description:'Création de sites web, applications, e-commerce. WordPress, React. Portfolio disponible.',
+        category:'informatique',location:'Cotonou, Cococodji',phone:'+229 94 44 44 44',
+        budget:50000,author:'Arnaud T.',
+        datePublished:new Date().toISOString(),
+        deadlineISO: future5.toISOString()
       }
     ];
     saveServices();
