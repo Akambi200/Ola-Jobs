@@ -23,7 +23,7 @@
     .nav-menu{display:flex;list-style:none;gap:1rem;flex-wrap:wrap}
     .nav-item{cursor:pointer;padding:.5rem 1rem;border-radius:25px;transition:.25s;font-weight:500;border:2px solid transparent}
     .nav-item:hover{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;transform:translateY(-2px)}
-    .nav-item.locked{border-color:#e5e7eb;color:#9ca3af}
+    .nav-item.locked{border-color:#e5e7eb;color:#9ca3af;cursor:not-allowed}
     main{max-width:1200px;margin:2rem auto;padding:0 2rem}
     .section{display:none;background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border-radius:20px;padding:2rem;box-shadow:0 8px 32px rgba(0,0,0,.1);animation:fadeIn .5s ease}
     .section.active{display:block}
@@ -39,6 +39,7 @@
     textarea{resize:vertical;min-height:120px}
     button{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;cursor:pointer;font-weight:700}
     button:hover{transform:translateY(-1px);box-shadow:0 8px 25px rgba(102,126,234,.25)}
+    button:disabled{opacity:.5;cursor:not-allowed;transform:none}
     .muted{color:#64748b;font-size:.9rem}
     .row{display:grid;grid-template-columns:1fr 1fr;gap:.85rem}
     .success-msg{color:#22c55e;text-align:center;font-weight:700;padding:.8rem;background:rgba(34,197,94,.1);border-radius:8px;margin-top:.5rem}
@@ -56,8 +57,39 @@
     .salon:hover{border-color:#667eea;transform:translateY(-2px)}
     .thread{margin-top:1rem;border-top:2px solid #e5e7eb;padding-top:1rem}
     .msg{padding:.7rem;border:1px solid #e5e7eb;border-radius:10px;margin:.5rem 0;background:#fafafa}
+    .msg.own-message{background:#eef2ff;border-color:#667eea}
     .msg small{color:#6b7280}
     .pill{display:inline-flex;align-items:center;gap:.4rem;border:1px solid #e5e7eb;border-radius:999px;padding:.2rem .6rem;font-size:.8rem}
+    .password-display-box{
+      background:#f8fafc;
+      border:2px dashed #667eea;
+      border-radius:8px;
+      padding:1rem;
+      margin:.5rem 0;
+      text-align:center;
+    }
+    .password-text{
+      font-size:1.3rem;
+      font-weight:700;
+      color:#667eea;
+      letter-spacing:2px;
+      font-family:monospace;
+    }
+    .chat-container{
+      max-height:500px;
+      overflow-y:auto;
+      background:#f9fafb;
+      border-radius:8px;
+      padding:1rem;
+      margin-bottom:1rem;
+    }
+    .back-btn{
+      background:#6b7280;
+      padding:.5rem 1rem;
+      font-size:.9rem;
+      margin-bottom:1rem;
+      display:inline-block;
+    }
     @media(max-width:768px){
       .nav-menu{gap:.5rem}
       .nav-container{flex-direction:column;gap:.6rem}
@@ -77,7 +109,6 @@
         <li class="nav-item" onclick="showSection('home')">Plateforme</li>
         <li class="nav-item" onclick="showSection('register')">Créer un compte</li>
         <li class="nav-item" onclick="showSection('login')">Connexion</li>
-        <!-- Accès restreint aux trois items suivants si non connecté -->
         <li id="nav-create" class="nav-item locked" onclick="guardedNav('create')">Créer une offre</li>
         <li id="nav-list" class="nav-item locked" onclick="guardedNav('list')">Liste des Services</li>
         <li id="nav-community" class="nav-item locked" onclick="guardedNav('community')">Communauté</li>
@@ -138,7 +169,6 @@
 
       <button type="submit">Se connecter</button>
       
-      <!-- AJOUT : Lien mot de passe oublié -->
       <p style="text-align:center;margin-top:.8rem">
         <a href="#" onclick="showSection('forgot-password'); return false;" style="color:#667eea;text-decoration:underline;font-size:.9rem">
           Mot de passe oublié ?
@@ -155,17 +185,16 @@
     <h2 id="forgot-title">Réinitialiser le mot de passe</h2>
     
     <p class="muted" style="text-align:center;max-width:500px;margin:0 auto 1.5rem">
-      Entrez votre nom d'utilisateur ou email. Nous afficherons votre mot de passe si le compte existe.
+      Entrez votre nom d'utilisateur ou email. Nous afficherons vos informations si le compte existe.
     </p>
     
     <form id="forgot-form">
       <label for="forgot-identifier">Nom d'utilisateur ou Email</label>
       <input id="forgot-identifier" required placeholder="Votre username ou email"/>
 
-      <button type="submit">Récupérer le mot de passe</button>
+      <button type="submit">Récupérer mes informations</button>
       
-      <p id="forgot-success" class="success-msg hidden"></p>
-      <p id="forgot-error" class="error-msg hidden">Aucun compte trouvé avec ces informations.</p>
+      <div id="forgot-result" class="hidden"></div>
       
       <p style="text-align:center;margin-top:1rem">
         <a href="#" onclick="showSection('login'); return false;" style="color:#667eea;text-decoration:underline;font-size:.9rem">
@@ -175,11 +204,10 @@
     </form>
   </section>
 
-  <!-- Créer une OFFRE (unique) -->
+  <!-- Créer une OFFRE -->
   <section id="create" class="section" aria-labelledby="create-title">
     <h2 id="create-title">Créer une offre de service</h2>
     <form id="service-form">
-      <!-- Type forcé à Offre -->
       <div class="pill" aria-label="Type d'annonce"><span>💼</span><strong>Offre de service</strong></div>
 
       <label for="title">Titre de l'offre</label>
@@ -261,7 +289,6 @@
   <section id="list" class="section" aria-labelledby="list-title">
     <h2 id="list-title">Services publiés</h2>
     
-    <!-- Info sécurité numéros masqués -->
     <div style="background:#eff6ff;border:1px solid #3b82f6;border-radius:8px;padding:.8rem;margin-bottom:1rem;font-size:.9rem">
       ℹ️ <strong>Pour votre sécurité :</strong> Les numéros sont masqués. Utilisez le bouton "Contacter" pour joindre le prestataire via WhatsApp.
     </div>
@@ -293,12 +320,13 @@
     <div class="salons" id="salon-grid"></div>
 
     <div id="salon-panel" class="hidden">
+      <button class="back-btn" onclick="closeSalon()">← Retour aux salons</button>
       <div class="thread">
         <h3 id="salon-title" style="text-align:left;margin-bottom:.5rem"></h3>
-        <div id="messages"></div>
+        <div class="chat-container" id="messages"></div>
         <form id="msg-form" style="margin-top:.8rem">
           <label for="msg-input">Votre message</label>
-          <textarea id="msg-input" required placeholder="Écris ton message…"></textarea>
+          <textarea id="msg-input" required placeholder="Écris ton message…" rows="3"></textarea>
           <button type="submit" style="margin-top:.5rem">Envoyer</button>
         </form>
       </div>
@@ -310,8 +338,8 @@
 /** =========================
  *  Configuration Admin
  *  ========================= */
-const ADMIN_USERNAME = 'admin'; // REMPLACER par votre nom d'utilisateur admin
-const INTERMEDIARY_PHONE = '+229 01 47 73 68 67'; // Votre numéro intermédiaire
+const ADMIN_USERNAME = 'Allah'; // Nom d'utilisateur admin
+const INTERMEDIARY_PHONE = '+229 01 47 73 68 67'; // Numéro intermédiaire
 
 /** =========================
  *  Données & persistance
@@ -389,8 +417,8 @@ document.getElementById('register-form').addEventListener('submit', (e)=>{
   users.push(newUser); saveUsers();
 
   document.getElementById('register-success').classList.remove('hidden');
-  (e.target).reset();
-  setTimeout(()=>showSection('login'), 1000);
+  e.target.reset();
+  setTimeout(()=>showSection('login'), 1500);
 });
 
 document.getElementById('login-form').addEventListener('submit', (e)=>{
@@ -398,13 +426,15 @@ document.getElementById('login-form').addEventListener('submit', (e)=>{
   const idf = document.getElementById('login-user').value.trim().toLowerCase();
   const pass = document.getElementById('login-pass').value;
   const user = users.find(u => (u.username.toLowerCase()===idf || u.email===idf) && u.password===pass);
+  
   document.getElementById('login-error').classList.add('hidden');
+  document.getElementById('login-success').classList.add('hidden');
 
   if(user){
     currentUser = user; saveCurrentUser();
     document.getElementById('login-success').classList.remove('hidden');
-    updateUserStatus(); setProtectedNav(true); (e.target).reset();
-    setTimeout(()=>showSection('home'), 900);
+    updateUserStatus(); setProtectedNav(true); e.target.reset();
+    setTimeout(()=>showSection('home'), 1200);
   } else {
     document.getElementById('login-error').classList.remove('hidden');
   }
@@ -415,9 +445,10 @@ function updateUserStatus(){
   const welcomeDiv = document.getElementById('user-welcome');
 
   if(currentUser){
+    const adminBadge = currentUser.username === ADMIN_USERNAME ? '<span class="badge" style="background:#ef4444;color:#fff;margin-left:.5rem">👑 ADMIN</span>' : '';
     welcomeDiv.innerHTML = `
-      <strong>Bonjour ${currentUser.username} !</strong><br>
-      <small>${currentUser.city}</small><br>
+      <strong>Bonjour ${escapeHtml(currentUser.username)} !</strong>${adminBadge}<br>
+      <small>${escapeHtml(currentUser.city)}</small><br>
       <button onclick="logout()" style="margin-top:.5rem;padding:.5rem;font-size:.85rem">Déconnexion</button>
     `;
     statusDiv.classList.remove('hidden');
@@ -431,12 +462,13 @@ function logout(){
 }
 
 /** =========================
- *  Mot de passe oublié
+ *  Mot de passe oublié - VERSION CORRIGÉE
  *  ========================= */
 document.getElementById('forgot-form').addEventListener('submit', (e)=>{
   e.preventDefault();
   
   const identifier = document.getElementById('forgot-identifier').value.trim().toLowerCase();
+  const resultDiv = document.getElementById('forgot-result');
   
   // Chercher l'utilisateur
   const user = users.find(u => 
@@ -444,52 +476,74 @@ document.getElementById('forgot-form').addEventListener('submit', (e)=>{
     u.email.toLowerCase() === identifier
   );
   
-  // Cacher les messages précédents
-  document.getElementById('forgot-success').classList.add('hidden');
-  document.getElementById('forgot-error').classList.add('hidden');
-  
   if(user) {
-    // Afficher le mot de passe
-    const successMsg = document.getElementById('forgot-success');
-    successMsg.innerHTML = `
-      <strong>Compte trouvé !</strong><br>
-      <span style="font-size:.95rem">Nom d'utilisateur : <strong>${user.username}</strong></span><br>
-      <span style="font-size:.95rem">Email : <strong>${user.email}</strong></span><br>
-      <span style="font-size:.95rem">Mot de passe : 
-        <strong style="font-size:1.1rem;color:#667eea" id="password-display">••••••</strong>
-        <button onclick="togglePasswordDisplay('${user.password}')" 
-                style="padding:.3rem .6rem;font-size:.8rem;margin-left:.5rem;background:#667eea;color:#fff;border:none;border-radius:6px;cursor:pointer">
-          👁️ Afficher
-        </button>
-      </span><br>
-      <br>
-      <small style="color:#64748b">Notez-le bien et connectez-vous maintenant.</small>
+    // Afficher les informations dans une div dédiée
+    resultDiv.innerHTML = `
+      <div class="success-msg" style="text-align:left">
+        <strong style="font-size:1.1rem">✅ Compte trouvé !</strong><br><br>
+        
+        <div style="margin:.5rem 0">
+          <strong>Nom d'utilisateur :</strong> ${escapeHtml(user.username)}
+        </div>
+        
+        <div style="margin:.5rem 0">
+          <strong>Email :</strong> ${escapeHtml(user.email)}
+        </div>
+        
+        <div style="margin:.5rem 0">
+          <strong>Ville :</strong> ${escapeHtml(user.city)}
+        </div>
+        
+        <div class="password-display-box">
+          <div style="margin-bottom:.5rem"><strong>Votre mot de passe :</strong></div>
+          <div class="password-text" id="password-display">••••••••</div>
+          <button type="button" onclick="togglePasswordVisibility('${escapeHtml(user.password)}')" 
+                  style="margin-top:.8rem;padding:.5rem 1rem;font-size:.9rem;background:#667eea">
+            👁️ Afficher le mot de passe
+          </button>
+        </div>
+        
+        <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid #22c55e">
+          <small style="color:#059669">💡 Notez bien votre mot de passe et connectez-vous.</small>
+        </div>
+      </div>
     `;
-    successMsg.classList.remove('hidden');
+    resultDiv.classList.remove('hidden');
     
-    // Rediriger vers connexion après 8 secondes
+    // Pré-remplir le formulaire de connexion et rediriger après 10 secondes
     setTimeout(() => {
       showSection('login');
       document.getElementById('login-user').value = user.username;
-      document.getElementById('login-user').focus();
-    }, 8000);
+    }, 10000);
     
   } else {
     // Compte introuvable
-    document.getElementById('forgot-error').classList.remove('hidden');
+    resultDiv.innerHTML = `
+      <div class="error-msg">
+        ❌ Aucun compte trouvé avec ces informations.<br>
+        <small>Vérifiez votre saisie ou créez un nouveau compte.</small>
+      </div>
+    `;
+    resultDiv.classList.remove('hidden');
   }
+  
+  // Reset le formulaire
+  e.target.reset();
 });
 
-function togglePasswordDisplay(password) {
+// Fonction pour afficher/masquer le mot de passe
+function togglePasswordVisibility(password) {
   const display = document.getElementById('password-display');
   const btn = event.target;
   
-  if(display.textContent === '••••••') {
+  if(display.textContent === '••••••••') {
     display.textContent = password;
-    btn.textContent = '🙈 Masquer';
+    btn.innerHTML = '🙈 Masquer le mot de passe';
+    btn.style.background = '#ef4444';
   } else {
-    display.textContent = '••••••';
-    btn.textContent = '👁️ Afficher';
+    display.textContent = '••••••••';
+    btn.innerHTML = '👁️ Afficher le mot de passe';
+    btn.style.background = '#667eea';
   }
 }
 
@@ -520,8 +574,8 @@ document.getElementById('service-form').addEventListener('submit', (e)=>{
 
   const location = document.getElementById('location').value.trim();
   const phone = document.getElementById('phone').value.trim();
-  const date = document.getElementById('date').value; // yyyy-mm-dd
-  const time = document.getElementById('time').value; // HH:MM
+  const date = document.getElementById('date').value;
+  const time = document.getElementById('time').value;
   if(!date || !time){ alert('Veuillez indiquer la date et l\'heure d\'exécution.'); return; }
 
   const budgetSel = document.getElementById('budget-select').value;
@@ -548,32 +602,42 @@ document.getElementById('service-form').addEventListener('submit', (e)=>{
 
   services.push(newService); saveServices();
   document.getElementById('service-success').classList.remove('hidden');
-  (e.target).reset(); document.getElementById('other-cat-wrap').classList.add('hidden');
+  e.target.reset();
+  document.getElementById('other-cat-wrap').classList.add('hidden');
   document.getElementById('custom-budget-wrap').classList.add('hidden');
 
   displayServices();
-  setTimeout(()=>showSection('list'), 900);
+  setTimeout(()=>{
+    showSection('list');
+    document.getElementById('service-success').classList.add('hidden');
+  }, 1500);
 });
 
 /** =========================
- *  Liste + expiration auto + Masquage numéros
+ *  Liste + expiration auto + Masquage numéros CORRIGÉ
  *  ========================= */
 function isExpired(svc){
   return new Date(svc.deadlineISO).getTime() < Date.now();
 }
 
+// Fonction corrigée pour l'affichage des numéros
 function getDisplayPhone(service) {
   // Si pas connecté → numéro intermédiaire
   if (!currentUser) {
     return INTERMEDIARY_PHONE;
   }
   
-  // Si c'est l'admin OU l'auteur de l'offre → voir le vrai numéro
-  if (currentUser.username === ADMIN_USERNAME || currentUser.username === service.author) {
+  // Si c'est l'admin → voir TOUS les vrais numéros
+  if (currentUser.username === ADMIN_USERNAME) {
     return service.phone;
   }
   
-  // Sinon → numéro intermédiaire
+  // Si c'est l'auteur de l'offre → voir son propre numéro
+  if (currentUser.username === service.author) {
+    return service.phone;
+  }
+  
+  // Tous les autres utilisateurs → numéro intermédiaire
   return INTERMEDIARY_PHONE;
 }
 
@@ -589,9 +653,9 @@ function displayServices(){
   const valid = services.filter(s => !isExpired(s));
   const filtered = filterCategory ? valid.filter(s => (s.category||'').toLowerCase() === filterCategory.toLowerCase()) : valid;
 
-  // Purge silencieuse des expirés pour qu'ils ne réapparaissent pas
+  // Purge silencieuse des expirés
   const keep = services.filter(s => !isExpired(s));
-if(keep.length !== services.length){ services = keep; saveServices(); }
+  if(keep.length !== services.length){ services = keep; saveServices(); }
 
   if(filtered.length===0){
     servicesList.innerHTML = '';
@@ -607,22 +671,30 @@ if(keep.length !== services.length){ services = keep; saveServices(); }
     const cat = service.category || 'Non catégorisé';
     const displayPhone = getDisplayPhone(service);
     
-   // Badge admin pour distinguer visuellement
-    const isAdmin = currentUser && currentUser.username === 'Allah';
+    // Badges pour admin et auteur
+    const isAdmin = currentUser && currentUser.username === ADMIN_USERNAME;
     const isAuthor = currentUser && currentUser.username === service.author;
     
-    // Construire les badges (admin peut avoir les deux badges)
-    let badge = '';
-    if (isAdmin) {
-      badge += '<span class="badge" style="background:#ef4444;color:#fff;margin-left:.5rem">👑 ADMIN</span>';
+    let badges = '';
+    if (isAdmin && isAuthor) {
+      badges = '<span class="badge" style="background:#ef4444;color:#fff;margin-left:.5rem">👑 ADMIN</span><span class="badge" style="background:#22c55e;color:#fff;margin-left:.5rem">✨ VOTRE OFFRE</span>';
+    } else if (isAdmin) {
+      badges = '<span class="badge" style="background:#ef4444;color:#fff;margin-left:.5rem">👑 ADMIN</span>';
+    } else if (isAuthor) {
+      badges = '<span class="badge" style="background:#22c55e;color:#fff;margin-left:.5rem">✨ VOTRE OFFRE</span>';
     }
-    if (isAuthor) {
-      badge += '<span class="badge" style="background:#22c55e;color:#fff;margin-left:.5rem">✨ VOS OFFRES</span>';
-    } ;
+    
+    // Message pour indiquer si le numéro est masqué
+    let phoneInfo = '';
+    if (displayPhone === INTERMEDIARY_PHONE) {
+      phoneInfo = '<div style="font-size:.85rem;color:#6b7280;margin-top:.3rem">🔒 Numéro masqué - Contactez via l\'intermédiaire</div>';
+    } else {
+      phoneInfo = '<div style="font-size:.85rem;color:#22c55e;margin-top:.3rem">✅ Numéro réel visible</div>';
+    }
     
     return `
       <div class="service-item" aria-label="Offre de service">
-        <div class="service-title">${escapeHtml(service.title)} ${badge}</div>
+        <div class="service-title">${escapeHtml(service.title)} ${badges}</div>
         <div class="service-meta">
           <span class="badge">Offre</span>
           <span>${escapeHtml(cat)}</span>
@@ -636,6 +708,7 @@ if(keep.length !== services.length){ services = keep; saveServices(); }
           <span>📞 ${escapeHtml(displayPhone)}</span>
           <span>⏰ ${dt} à ${tm}</span>
         </div>
+        ${phoneInfo}
         <div class="service-meta">
           <span>👤 ${escapeHtml(service.author)}</span>
           <span>📅 Publié le ${new Date(service.datePublished).toLocaleDateString('fr-FR')}</span>
@@ -643,7 +716,7 @@ if(keep.length !== services.length){ services = keep; saveServices(); }
         <div class="service-meta" style="margin-top:.8rem;padding-top:.8rem;border-top:1px solid #e5e7eb">
           <button onclick="contactProvider('${displayPhone}', '${escapeHtml(service.title).replace(/'/g, "\\'")}', '${service.author}')" 
                   style="width:100%;padding:.7rem;background:#22c55e;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:700">
-            📞 Contacter le prestataire
+            📱 Contacter via WhatsApp
           </button>
         </div>
       </div>
@@ -652,7 +725,7 @@ if(keep.length !== services.length){ services = keep; saveServices(); }
 }
 
 /** =========================
- *  Communauté (salons)
+ *  Communauté (salons) - VERSION CORRIGÉE
  *  ========================= */
 const salonGrid = document.getElementById('salon-grid');
 const salonPanel = document.getElementById('salon-panel');
@@ -660,50 +733,137 @@ const salonTitle = document.getElementById('salon-title');
 const messagesDiv = document.getElementById('messages');
 const msgForm = document.getElementById('msg-form');
 let currentSalon = null;
+let messageRefreshInterval = null;
 
 function renderSalons(){
-  salonGrid.innerHTML = SALONS.map(s=>`
-    <div class="salon" onclick="openSalon('${s.key}')">
-      <strong>${s.name}</strong>
-      <p class="muted" style="margin-top:.3rem">Rejoins la discussion →</p>
-    </div>
-  `).join('');
+  salonGrid.innerHTML = SALONS.map(s=>{
+    const msgCount = (messages[s.key] || []).length;
+    return `
+      <div class="salon" onclick="openSalon('${s.key}')">
+        <strong>${s.name}</strong>
+        <p class="muted" style="margin-top:.3rem">
+          💬 ${msgCount} message${msgCount !== 1 ? 's' : ''}<br>
+          Rejoins la discussion →
+        </p>
+      </div>
+    `;
+  }).join('');
 }
+
 function openSalon(key){
   if(!currentUser){ return guardedNav('community'); }
   currentSalon = key;
   const meta = SALONS.find(s=>s.key===key);
   salonTitle.textContent = meta ? meta.name : 'Salon';
+  salonGrid.classList.add('hidden');
   salonPanel.classList.remove('hidden');
   renderMessages();
   document.getElementById('msg-input').focus();
+  
+  // Actualiser les messages toutes les 2 secondes
+  if(messageRefreshInterval) clearInterval(messageRefreshInterval);
+  messageRefreshInterval = setInterval(()=>{
+    if(currentSalon) renderMessages();
+  }, 2000);
 }
+
+function closeSalon(){
+  currentSalon = null;
+  salonPanel.classList.add('hidden');
+  salonGrid.classList.remove('hidden');
+  if(messageRefreshInterval){
+    clearInterval(messageRefreshInterval);
+    messageRefreshInterval = null;
+  }
+  renderSalons(); // Actualiser le compteur de messages
+}
+
 function renderMessages(){
+  // Recharger les messages depuis localStorage pour voir ceux des autres
+  messages = JSON.parse(localStorage.getItem('ola_messages')||'{}');
+  
   const list = messages[currentSalon] || [];
-  if(list.length===0){ messagesDiv.innerHTML = `<p class="muted">Aucun message pour l'instant. Soyez le premier à écrire !</p>`; return; }
-  messagesDiv.innerHTML = list.map(m=>`
-    <div class="msg">
-      <strong>${escapeHtml(m.author)}</strong> <small>· ${new Date(m.ts).toLocaleString('fr-FR')}</small>
-      <div style="margin-top:.3rem">${escapeHtml(m.text)}</div>
-    </div>
-  `).join('');
+  if(list.length===0){
+    messagesDiv.innerHTML = `<p class="muted" style="text-align:center;padding:2rem">Aucun message pour l'instant. Soyez le premier à écrire ! 💬</p>`;
+    return;
+  }
+  
+  messagesDiv.innerHTML = list.map(m=>{
+    const isOwnMessage = currentUser && m.author === currentUser.username;
+    const isAdminMessage = m.author === ADMIN_USERNAME;
+    const messageClass = isOwnMessage ? 'msg own-message' : 'msg';
+    
+    let authorBadge = '';
+    if(isAdminMessage){
+      authorBadge = '<span class="badge" style="background:#ef4444;color:#fff;margin-left:.5rem;font-size:.7rem">👑 ADMIN</span>';
+    }
+    if(isOwnMessage){
+      authorBadge += '<span class="badge" style="background:#667eea;color:#fff;margin-left:.5rem;font-size:.7rem">Vous</span>';
+    }
+    
+    return `
+      <div class="${messageClass}">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem">
+          <strong style="color:${isOwnMessage ? '#667eea' : '#333'}">${escapeHtml(m.author)}</strong>${authorBadge}
+          <small>${new Date(m.ts).toLocaleString('fr-FR', {
+            day:'2-digit',
+            month:'2-digit',
+            hour:'2-digit',
+            minute:'2-digit'
+          })}</small>
+        </div>
+        <div style="margin-top:.3rem;line-height:1.5">${escapeHtml(m.text)}</div>
+      </div>
+    `;
+  }).join('');
+  
+  // Scroll automatique vers le bas
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
+
 msgForm.addEventListener('submit', (e)=>{
   e.preventDefault();
   if(!currentUser){ return guardedNav('community'); }
+  
   const text = document.getElementById('msg-input').value.trim();
   if(!text) return;
-  messages[currentSalon] = messages[currentSalon] || [];
-  messages[currentSalon].push({ author: currentUser.username, text, ts: Date.now() });
+  
+  // Recharger les messages avant d'ajouter
+  messages = JSON.parse(localStorage.getItem('ola_messages')||'{}');
+  
+  // Initialiser le salon si nécessaire
+  if(!messages[currentSalon]){
+    messages[currentSalon] = [];
+  }
+  
+  // Ajouter le nouveau message
+  messages[currentSalon].push({
+    author: currentUser.username,
+    text: text,
+    ts: Date.now()
+  });
+  
+  // Sauvegarder
   saveMessages();
-  (e.target).reset();
+  
+  // Reset et afficher
+  e.target.reset();
   renderMessages();
+  renderSalons(); // Mettre à jour le compteur
 });
 
 /** =========================
  *  Utilitaires
  *  ========================= */
-function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' }[m])); }
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, m=>({
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;',
+    "'":'&#039;'
+  }[m]));
+}
 
 /** =========================
  *  Init
@@ -712,6 +872,19 @@ document.addEventListener('DOMContentLoaded', ()=>{
   loadState();
   renderSalons();
   displayServices();
+
+  // Créer un compte admin si n'existe pas
+  if(!users.some(u => u.username === ADMIN_USERNAME)){
+    users.push({
+      id: Date.now(),
+      username: ADMIN_USERNAME,
+      email: 'admin@olajobs.com',
+      password: 'admin2025',
+      city: 'Cotonou'
+    });
+    saveUsers();
+    console.log('✅ Compte admin créé: Allah / admin2025');
+  }
 
   // Bouchon d'exemples si base vide
   if(services.length===0){
@@ -771,7 +944,36 @@ document.addEventListener('DOMContentLoaded', ()=>{
     ];
     saveServices();
   }
+  
+  // Ajouter quelques messages d'exemple dans les salons si vides
+  if(Object.keys(messages).length === 0){
+    messages = {
+      'entrepreneuriat': [
+        {
+          author: 'Admin',
+          text: 'Bienvenue dans le salon Entrepreneuriat ! Partagez vos projets et idées. 🚀',
+          ts: Date.now() - 3600000
+        }
+      ],
+      'numerique': [
+        {
+          author: 'Admin',
+          text: 'Salon dédié aux discussions tech, développement web, apps mobiles... 💻',
+          ts: Date.now() - 7200000
+        }
+      ]
+    };
+    saveMessages();
+  }
+  
   displayServices();
+});
+
+// Nettoyer l'intervalle quand on quitte la page
+window.addEventListener('beforeunload', ()=>{
+  if(messageRefreshInterval){
+    clearInterval(messageRefreshInterval);
+  }
 });
 </script>
 </body>
